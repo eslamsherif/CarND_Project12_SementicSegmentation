@@ -57,31 +57,38 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     """
     #Hyper Params
     reg  = 1e-3
+    init = 0.01
     #model
 
     pool4_out_scaled = tf.multiply(vgg_layer4_out, 0.01)
     pool3_out_scaled = tf.multiply(vgg_layer3_out, 0.0001)
 
     conv_layer_7 = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, padding = 'same',
+                                    kernel_initializer = tf.random_normal_initializer(stddev=init),
                                     kernel_regularizer= tf.contrib.layers.l2_regularizer(reg))
 
     conv_layer_4 = tf.layers.conv2d(pool4_out_scaled, num_classes, 1, padding = 'same',
+                                    kernel_initializer = tf.random_normal_initializer(stddev=init),
                                     kernel_regularizer= tf.contrib.layers.l2_regularizer(reg))
 
     conv_layer_3 = tf.layers.conv2d(pool3_out_scaled, num_classes, 1, padding = 'same',
+                                    kernel_initializer = tf.random_normal_initializer(stddev=init),
                                     kernel_regularizer= tf.contrib.layers.l2_regularizer(reg))
 
     upsample_conv_layer_7 = tf.layers.conv2d_transpose(conv_layer_7, num_classes, 4, strides= (2, 2), padding= 'same',
+                                                  kernel_initializer = tf.random_normal_initializer(stddev=init),
                                                   kernel_regularizer= tf.contrib.layers.l2_regularizer(reg))
 
     skip_4 = tf.add(upsample_conv_layer_7, conv_layer_4)
 
     upsample_conv_layer_4 = tf.layers.conv2d_transpose(skip_4, num_classes, 4, strides= (2, 2), padding= 'same',
+                                                   kernel_initializer = tf.random_normal_initializer(stddev=init),
                                                    kernel_regularizer= tf.contrib.layers.l2_regularizer(reg))
 
     skip_3 = tf.add(upsample_conv_layer_4, conv_layer_3)
 
     upsample_conv_layer_3 = tf.layers.conv2d_transpose(skip_3, num_classes, 16, strides= (8, 8), padding= 'same',
+                                                  kernel_initializer = tf.random_normal_initializer(stddev=init),
                                                   kernel_regularizer= tf.contrib.layers.l2_regularizer(reg))
 
     return upsample_conv_layer_3
