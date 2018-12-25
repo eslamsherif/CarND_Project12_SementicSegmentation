@@ -137,6 +137,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     """
     sess.run(tf.global_variables_initializer())
     
+    idx = 0
     for epoch in range(0, epochs):
         for image, label in get_batches_fn(batch_size):
             _, loss = sess.run([train_op, cross_entropy_loss],
@@ -146,14 +147,16 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
                                     keep_prob: 0.5,
                                     learning_rate: 0.00001
                                 })
+            print(idx, ":",loss)
+            idx = idx + 1
 tests.test_train_nn(train_nn)
 
 
 def run():
     num_classes = 2
     image_shape = (160, 576)  # KITTI dataset uses 160x576 images
-    epochs = 50
-    batch_size = 10
+    epochs = 15
+    batch_size = 3
     data_dir = './data'
     runs_dir = './runs'
     tests.test_for_kitti_dataset(data_dir)
